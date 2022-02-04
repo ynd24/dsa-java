@@ -31,6 +31,7 @@ public class LongIntegerQuizTest {
         a.add(new LongIntegerQuiz("123"));
         assertEquals("-0", a.toString());
     }
+
     @Test
     public void test5() {
         LongInteger a = new LongIntegerQuiz("123");
