@@ -47,12 +47,13 @@ public class TernaryHeapQuiz<T extends Comparable<T>> extends AbstractPriorityQu
     }
 
     private void sink() {
+       // int j = 2;
         for (int k = 1, i = 2; i <= size(); k = i, i = (3*i)-1) {
             int j = i;
-            if (i < size() && compare(i, i+1) < 0) {
+            if (j+1 <= size() && compare(i, i+1) < 0) {
                 i++;
             }
-            if (i < size() && compare(i, j + 2) < 0) {
+            if (j+2 <= size() && compare(i, j + 2) < 0) {
                 i = j + 2;
             }
             if (compare(k, i) >= 0) break;
