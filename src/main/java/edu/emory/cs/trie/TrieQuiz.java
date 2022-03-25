@@ -18,11 +18,10 @@ public class TrieQuiz extends Trie<Integer> {
         for (int i = 0; i < input.length(); i++)
             arr[i] = input.charAt(i); // copy input into an array
 
-        node = getRoot();
-        int begin = 0;
-        int end = 0;
-        int ID = 0;
-        List<Entity> ent_list = new ArrayList<Entity>();
+        int begin;
+        int end;
+        int ID;
+        List<Entity> ent_list = new ArrayList<>();
 
         for (int i = 0; i < input.length(); i++) {
             for (int j = i; j < input.length(); j++) {
@@ -38,9 +37,6 @@ public class TrieQuiz extends Trie<Integer> {
                 node = (!n.isEndState()) ? n : getRoot();
             }
         }
-        // return List.of(new Entity(begin, end, ID));
-        // Entity new_E = new Entity(3, 5, 2);
-        // ent_list.add(new_E);
         return ent_list;
     }
 
