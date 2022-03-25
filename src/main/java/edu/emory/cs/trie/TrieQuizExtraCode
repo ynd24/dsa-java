@@ -1,0 +1,43 @@
+  int j = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (node.equals(arr[i])) { // if root node is part of array, first round of check
+                j = i+1; // j-1(i) is position in array that matches root, means country may exist
+                break; // cause now want to check children are the next char in array
+            } else if (i == arr.length-1 && !node.equals(arr[i])) {
+                System.out.println("Word does not exist");
+                j = arr.length + 1; // so that while condition is never entered
+            }
+        }
+
+        while (j <= arr.length) { /** how do I travel to children, and if multiple children what do I do? */
+            if (node.getChildrenMap().equals(arr[j]) && !node.isEndState()) { // if next letter is equal to child
+                /** how to check if child == arr[i] */
+                j++; // want to keep traversing down, as havent reached end out country name
+            } else if (node.getChildrenMap().equals(arr[j]) && node.isEndState()) {
+                node.getValue(); /** here we have found the country, so I want to return indexes and value */
+                node.getBeginIndex();
+                node.getEndIndex(); /** will these work? */
+                node.getCountryId();
+                break;
+            } else {
+                System.out.println("Word does not exist");
+                break;
+            }
+            return (List<Entity>) node;
+        }
+        //  this is a dummy return statement
+        return List.of(new Entity(14, 25, 1), new Entity(44, 57, 0));
+    }
+    /**
+     if (find(String.valueOf(arr[i])) != null) { // this means characters match
+     }
+     int i = 0;
+     while (find(String.valueOf(arr[i])) != null) {
+     if (node.isEndState()) {
+     node.getValue(); // here I want to return the beginning and end index
+     }
+     i++;
+     } else {
+     break;
+     } */
+}
