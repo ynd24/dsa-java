@@ -7,80 +7,63 @@ import java.util.*;
 
 /** @author Jinho D. Choi */
 public class MSTAllHW implements MSTAll {
+
+    List<SpanningTree> list = new ArrayList<>();
+    List<List<String>> stringTree = new ArrayList<>();
     @Override
-    //implement finding all minimum spanning trees using Prim's algorithm
     public List<SpanningTree> getMinimumSpanningTrees(Graph graph) {
-        //output list of minimum spanning trees
-        //output should not include redundant trees
 
-        //create a list of minimum spanning trees
-        List<SpanningTree> minimumSpanningTrees = new ArrayList<>();
+        if (graph.getAllEdges().size() == 0) return list;
 
-        //create a list of edges
+        MSTAux(0, graph, new PriorityQueue<>(), new SpanningTree(), new HashSet<>());
+
+        System.out.println(list.size());
+        return list;
+    }
+
+    public void MSTAux(int vertex, Graph graph, PriorityQueue<Edge> queue, SpanningTree tree, Set<Integer> visited) {
+        add(queue, visited, graph, vertex);
         List<Edge> edges = new ArrayList<>();
+        if (queue.isEmpty()) return;
 
-        //create a list of vertices
-        List<Integer> vertices = new ArrayList<>();
+        double min = queue.peek().getWeight();
 
-        //create a list of unvisited vertices
-          List<Integer> unvisited = new ArrayList<>();
-
-        //Prims algorithm
-
-        PriorityQueue<Edge> queue = new PriorityQueue<>(); // Priority queue so that edges picked on least weight
-        SpanningTree tree = new SpanningTree();
-        Set<Integer> visited = new HashSet<>();
-        Edge edge;
-
-        // add all connecting vertices from start vertex to the queue
-        add(queue, visited, graph, 0);
-
-        while (!queue.isEmpty()) {
-            edge = queue.poll();
-
-            if (!visited.contains(edge.getSource())) {
-                tree.addEdge(edge);
-                // if a spanning tree is found, break.
-                if (tree.size() + 1 == graph.size()) break;
-                // add all connecting vertices from current vertex to the queue
-                add(queue, visited, graph, edge.getSource());
-            }
-        }
-
-        //create a list of minimum spanning trees
-        for (Edge edge1 : edges) {
-            //create a new minimum spanning tree
-            SpanningTree spanningTree = new SpanningTree();
-
-            //add the edge to the spanning tree
-            spanningTree.addEdge(edge1);
-
-            //add the spanning tree to the list of minimum spanning trees
-            minimumSpanningTrees.add(spanningTree);
-        }
-
-        //remove redundant spanning trees
-        for (int i = 0; i < minimumSpanningTrees.size(); i++) {
-            for (int j = i + 1; j < minimumSpanningTrees.size(); j++) {
-                if (minimumSpanningTrees.get(i).getTotalWeight() > minimumSpanningTrees.get(j).getTotalWeight()) {
-                    minimumSpanningTrees.remove(i);
-                    i--;
-                    break;
+        for (Edge e : queue) {
+            PriorityQueue<Edge> temporary = new PriorityQueue<>(queue);
+            temporary.remove(e);
+            if (!visited.contains(e.getSource())) {
+                SpanningTree t = new SpanningTree(tree);
+                t.addEdge(e);
+                if (t.size() + 1 == graph.size()) {
+                    if (!stringTree.contains(stringRep(t))) {
+                        list.add(t);
+                        stringTree.add(stringRep(t));
+                    }
                 }
+                MSTAux(e.getSource(), graph, temporary, t, new HashSet<>(visited));
             }
         }
-
-        //return the list of minimum spanning trees
-        return minimumSpanningTrees;
-
     }
 
     private void add(PriorityQueue<Edge> queue, Set<Integer> visited, Graph graph, int target) {
         visited.add(target);
         for (Edge edge : graph.getIncomingEdges(target)) {
-            if (!visited.contains(edge.getSource()))
-                queue.add(edge);
+            if (!visited.contains(edge.getSource())) queue.add(edge);
         }
     }
 
+    public List<String> stringRep(SpanningTree t) {
+        List<String> list = new ArrayList<>();
+        for (Edge e : t.getEdges()) {
+            String temp = "";
+            if (e.getSource() < e.getTarget()) {
+                temp = e.getSource() + "-" + e.getTarget();
+            } else {
+                temp = e.getTarget() + "-" + e.getSource();
+            }
+            list.add(temp);
+        }
+        Collections.sort(list);
+        return list;
+    }
 }
