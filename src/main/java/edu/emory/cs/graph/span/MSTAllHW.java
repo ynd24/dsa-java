@@ -27,8 +27,11 @@ public class MSTAllHW implements MSTAll {
         if (queue.isEmpty()) return;
 
         double min = queue.peek().getWeight();
-
         for (Edge e : queue) {
+            if (e.getWeight() == min) edges.add(e);
+        }
+
+        for (Edge e : edges) {
             PriorityQueue<Edge> temporary = new PriorityQueue<>(queue);
             temporary.remove(e);
             if (!visited.contains(e.getSource())) {
