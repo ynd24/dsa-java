@@ -1,0 +1,103 @@
+/*
+ * Copyright 2020 Emory University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package edu.emory.cs.graph.flow;
+
+import edu.emory.cs.graph.Graph;
+import edu.emory.cs.graph.Subgraph;
+import edu.emory.cs.graph.Edge;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+/** @author Jinho D. Choi */
+public class NetworkFlowQuiz {
+
+    Edge edge;
+    Set<Integer> visited = new HashSet<>();
+    PriorityQueue<Edge> queue = new PriorityQueue<>();
+    ArrayList<Edge> path = new ArrayList<>();
+    /**
+     * Using depth-first traverse.
+     * @param graph  a directed graph.
+     * @param source the source vertex.
+     * @param target the target vertex.
+     * @return a set of all augmenting paths between the specific source and target vertices in the graph.
+     */
+
+    /**
+     1. Create NotVisited Deque with all vertices
+     2. Create Empty Set of Visited
+     3. Create Queue of edges to store edges
+     */
+    public Set<Subgraph> getAugmentingPaths(Graph graph, int source, int target, Set<Integer> visited) {
+
+        add(queue, visited, graph, target); // add incoming edges of target to PQ
+
+        // need base case where all incoming edges sources have been visited
+        // problem is does not explore all paths, need to make a recursive call back to current and not Target
+        // vertex till all its incoming sources have been visited
+        // then when you start all over again
+        if (visited.contains(graph.getIncomingEdges(target))) return null;
+
+        while(!queue.isEmpty()) {
+            edge = queue.poll();
+            if (edge.getSource() == source) { // found 1 path
+                path.add(edge);
+                clearQueue();
+                getAugmentingPaths(graph, source, target, visited); // go look for other paths
+                break;
+            }
+
+            if (!visited.contains(edge.getSource())) { // if more than 2 incoming edges bug
+                visited.add(edge.getSource());
+                path.add(edge);
+            } else {
+                while (!queue.isEmpty()) {
+                    if (visited.contains(edge.getSource())) {
+                    edge = queue.poll();
+                    } else {
+                        break;// what if this is also visited, how to keep polling till you reach not visited
+                    }
+                }
+
+                visited.add(edge.getSource());
+                path.add(edge);
+            }
+        }
+
+        int Source = edge.getSource();
+        clearQueue();
+
+      return getAugmentingPaths(graph, source, Source, new HashSet<>(visited)); // never ending bug
+
+    }
+    private void add(PriorityQueue<Edge> queue, Set<Integer> visited, Graph graph, int target) {
+        visited.add(target);
+        for (Edge edge : graph.getIncomingEdges(target)) {
+            if (!visited.contains(edge.getSource()))
+                queue.add(edge);
+        }
+    }
+
+    private void clearQueue() {
+        for (int i = 0; i < queue.size(); i++) {
+            queue.poll();
+        }
+
+    }
+
+}
